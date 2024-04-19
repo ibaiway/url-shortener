@@ -1,16 +1,23 @@
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
+import { secureHeaders } from 'hono/secure-headers'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
+import { App } from './app'
 
 const app = new Hono()
 app.use(logger())
+app.use(secureHeaders())
 
-app.get('/', serveStatic({ root: './static' }))
+app.get('/', (c) => {
+	return c.html(<App />)
+})
+//app.get('/', serveStatic({ root: './static/index.html' }))
 app.use('/static/*', serveStatic({ root: './' }))
 
 app.post('/slug', (c) => {
-	const { url } = c.req.body()
+	//const { url } = c.req.body()
+	const url = 'test'
 	if (!url) {
 		return c.json({ error: 'No slug provided' }, 400)
 	}
