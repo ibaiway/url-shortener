@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="light dark" />
+		<title>URL Shortener by Ibai</title>
+		<meta name="description" content="A Simple URL Shortener" />
+
+		<!-- Pico.css -->
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
+		/>
+	</head>
+
+	<body>
+		<!-- Header -->
+		<header class="container">
+			<nav>
+				<ul>
+					<li>
+						<details class="dropdown">
+							<summary role="button" class="secondary">Theme</summary>
+							<ul>
+								<li><a href="#" data-theme-switcher="auto">Auto</a></li>
+								<li><a href="#" data-theme-switcher="light">Light</a></li>
+								<li><a href="#" data-theme-switcher="dark">Dark</a></li>
+							</ul>
+						</details>
+					</li>
+				</ul>
+			</nav>
+			<hgroup style="text-align: center">
+				<h1>URL Shortener</h1>
+				<p>Shorten URLs with the click of a button</p>
+			</hgroup>
+		</header>
+		<!-- ./ Header -->
+
+		<!-- Main -->
+		<main class="container">
+			<!-- Preview -->
+			<section id="preview">
+				<div class="grid" style="text-align: center">
+					<form>
+						<input
+							type="url"
+							id="urlinput"
+							name="url"
+							placeholder="https://example.com"
+							oninput="validateUrl(this.value)"
+						/>
+
+						<input
+							style="width: 40%"
+							type="submit"
+							value="Make it short"
+							onclick="sendData(event)"
+						/>
+					</form>
+				</div>
+				<h2>Preview</h2>
+				<p>
+					Sed ultricies dolor non ante vulputate hendrerit. Vivamus sit amet
+					suscipit sapien. Nulla iaculis eros a elit pharetra egestas.
+				</p>
+				<form>
+					<div class="grid">
+						<input
+							type="text"
+							name="firstname"
+							placeholder="First name"
+							aria-label="First name"
+							required
+						/>
+						<input
+							type="email"
+							name="email"
+							placeholder="Email address"
+							aria-label="Email address"
+							autocomplete="email"
+							required
+						/>
+						<button type="submit">Subscribe</button>
+					</div>
+					<fieldset>
+						<label for="terms">
+							<input type="checkbox" role="switch" id="terms" name="terms" />
+							I agree to the
+							<a href="#" onclick="event.preventDefault()">Privacy Policy</a>
+						</label>
+					</fieldset>
+				</form>
+			</section>
+			<!-- ./ Preview -->
+
+			<!-- Typography-->
+			<section id="typography">
+				<!-- Inline text elements-->
+				<h3>Inline text elements</h3>
+				<div class="grid">
+					<p><a href="#" onclick="event.preventDefault()">Primary link</a></p>
+					<p>
+						<a href="#" class="secondary" onclick="event.preventDefault()"
+							>Secondary link</a
+						>
+					</p>
+					<p>
+						<a href="#" class="contrast" onclick="event.preventDefault()"
+							>Contrast link</a
+						>
+					</p>
+				</div>
+				<div class="grid">
+					<p><strong>Bold</strong></p>
+					<p><em>Italic</em></p>
+					<p><u>Underline</u></p>
+				</div>
+				<div class="grid">
+					<p><del>Deleted</del></p>
+					<p><ins>Inserted</ins></p>
+					<p><s>Strikethrough</s></p>
+				</div>
+				<div class="grid">
+					<p><small>Small </small></p>
+					<p>Text <sub>Sub</sub></p>
+					<p>Text <sup>Sup</sup></p>
+				</div>
+				<div class="grid">
+					<p>
+						<abbr title="Abbreviation" data-tooltip="Abbreviation">Abbr.</abbr>
+					</p>
+					<p><kbd>Kbd</kbd></p>
+					<p><mark>Highlighted</mark></p>
+				</div>
+			</section>
+			<!-- ./ Typography-->
+
+			<!-- Form elements-->
+			<section id="form">
+				<form>
+					<h2>Form elements</h2>
+
+					<!-- Search -->
+					<label for="search">Search</label>
+					<input type="search" id="search" name="search" placeholder="Search" />
+
+					<!-- Text -->
+					<label for="text">Text</label>
+					<input type="url" id="text" name="text" placeholder="Text" />
+					<small>Curabitur consequat lacus at lacus porta finibus.</small>
+				</form>
+			</section>
+			<!-- ./ Form elements-->
+
+			<!-- Loading -->
+			<section id="loading">
+				<h2>Loading</h2>
+				<article aria-busy="true"></article>
+			</section>
+			<!-- ./ Loading -->
+		</main>
+		<!-- ./ Main -->
+
+		<!-- Footer -->
+		<footer class="container">
+			<small
+				>Built by
+				<a href="https://www.linkedin.com/in/ibaialberdi/">Ibai Alberdi</a> •
+				<a href="https://github.com/ibaiway/url-shortener"
+					>Source code</a
+				></small
+			>
+		</footer>
+		<!-- ./ Footer -->
+
+		<!-- Minimal theme switcher -->
+		<script src="static/minimal-theme-switcher.js"></script>
+		<script>
+			let debounceTimeout
+			const DEBOUNCE_TIME = 700 // 0.7 second
+
+			function validateUrl(url) {
+				clearTimeout(debounceTimeout)
+
+				debounceTimeout = setTimeout(() => {
+					const urlInput = document.getElementById('urlinput')
+					const urlPattern = new RegExp(
+						'^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?$'
+					)
+					const isValidUrl = urlPattern.test(url)
+					urlInput.setAttribute('aria-invalid', !isValidUrl)
+				}, DEBOUNCE_TIME)
+			}
+		</script>
+		<script>
+			function sendData(event) {
+				event.preventDefault()
+
+				const urlInput = document.getElementById('urlinput')
+				const url = urlInput.value
+
+				// Make a POST request to the endpoint with the URL data
+				fetch('/slug', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ url }),
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						// Handle the response data
+						console.log(data)
+					})
+					.catch((error) => {
+						// Handle any errors
+						console.error(error)
+					})
+			}
+		</script>
+	</body>
+</html>
